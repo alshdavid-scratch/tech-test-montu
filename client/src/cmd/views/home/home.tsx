@@ -8,12 +8,15 @@ import { makeObservable, kind } from '../../../platform/rx/index.ts';
 import { Video } from '../../components/video/video.tsx';
 import { classNames } from '../../../platform/preact/class-names.ts';
 import { Intersector } from '../../components/intersector/intersector.tsx';
+import { SearchResponseData } from '../../../platform/giphy-api/search-get/search-get.ts';
+import { Input } from '../../components/input/input.tsx';
 
 export class HomeViewModel {
   #giphyService: GiphyService
-  #page: AsyncIterableIterator<TrendingResponseData[]> | undefined
-  list: Array<TrendingResponseData>
+  #page: AsyncIterableIterator<TrendingResponseData[] | SearchResponseData[]> | undefined
+  list: Array<TrendingResponseData | SearchResponseData>
   loading: boolean
+  searchInput: string
 
   constructor(
     giphyService: GiphyService
@@ -21,26 +24,36 @@ export class HomeViewModel {
     this.#giphyService = giphyService
     this.list = []
     this.loading = false
+    this.searchInput = ''
 
     makeObservable(this, {
       list: kind.array,
       loading: kind.value,
+      searchInput: kind.value,
     })
   }
 
   async onInit() {
-    await new Promise(res => setTimeout(res, 500))
-    this.#page = this.#giphyService.trending('gif')
-    await this.loadMore()
+    this.#page = this.#giphyService.trending()
+    await this.nextPage()
   }
 
-  async loadMore() {
+  async nextPage() {
     if (this.loading || !this.#page) {
       return
     }
     this.loading = true
+    await new Promise(res => setTimeout(res, 500)) // Added lag for dramatic effect
     this.list.push(...(await this.#page.next()).value)
     this.loading = false
+  }
+
+  async search() {
+    this.list = []
+    if (this.searchInput !== '') {
+      this.#page = this.#giphyService.search(this.searchInput)
+    }
+    await this.nextPage()
   }
 }
 
@@ -63,8 +76,16 @@ export function HomeView() {
 
       <nav className="search">
         <div className="content-max-width">
-          <input type="text" placeholder="Search" />
-          <button>🔎</button>
+          <Input 
+            type="text" 
+            placeholder="Search" 
+            value={vm.searchInput} 
+            onInput={e => vm.searchInput = (e.target as HTMLInputElement).value} 
+            onEnter={_ => vm.search()}/>
+
+          <button 
+            disabled={vm.loading}
+            onClick={() => vm.search()}>🔎</button>
         </div>
       </nav>
 
@@ -87,7 +108,7 @@ export function HomeView() {
       </main>
 
       <Intersector 
-        onEnter={() => vm.loadMore()}
+        onEnter={() => vm.nextPage()}
         rootMargin={window.screen.height + 'px'}
         />
     </Fragment>)

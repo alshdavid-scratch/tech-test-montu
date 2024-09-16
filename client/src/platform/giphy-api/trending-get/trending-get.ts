@@ -113,8 +113,9 @@ export type TrendingResponse = {
   };
 };
 
-export async function trendingGifsRequestGet(
+export async function trendingRequestGet(
   fetcher: Fetcher,
+  kind: 'gifs' | 'stickers',
   options: TrendingRequest
 ): Promise<TrendingResponse> {
   const query = new URLSearchParams();
@@ -123,27 +124,7 @@ export async function trendingGifsRequestGet(
   }
 
   const response = await fetcher.fetch(
-    `https://api.giphy.com/v1/gifs/trending?${query.toString()}`
-  );
-
-  if (!response.ok) {
-    throw new Error("Request failed")
-  }
-  
-  return await response.json()
-}
-
-export async function trendingStickersRequestGet(
-  fetcher: Fetcher,
-  options: TrendingRequest
-): Promise<TrendingResponse> {
-  const query = new URLSearchParams();
-  for (const [key, value] of Object.entries(options)) {
-    query.set(key, value.toString());
-  }
-
-  const response = await fetcher.fetch(
-    `https://api.giphy.com/v1/stickers/trending?${query.toString()}`
+    `https://api.giphy.com/v1/${kind}/trending?${query.toString()}`
   );
 
   if (!response.ok) {

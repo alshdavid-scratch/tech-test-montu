@@ -10,7 +10,10 @@ import { CachedFetcher } from '../platform/dom/cahced-fetch.ts'
 // DI system using React context
 const provider = new Map()
 
-const cachedFetcher = new CachedFetcher(window, 86_400_000) // cache requests for 24 hours
+// Cache requests for 24 hours
+// I need this because the GIPHY has a
+// rate limit of 100 requests per month lol
+const cachedFetcher = new CachedFetcher(window, 86_400_000)
 
 provider.set(Environment, Environment)
 provider.set(GiphyService, new GiphyService(cachedFetcher, Environment))
@@ -25,4 +28,7 @@ function App() {
 
 render(<App />, document.querySelector('#root')!)
 
-console.log()
+if (!Environment.production) {
+  // @ts-expect-error
+  window.debug = provider
+}
