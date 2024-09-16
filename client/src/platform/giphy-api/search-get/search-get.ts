@@ -4,7 +4,7 @@
 */
 
 
-import { Fetcher } from "../../dom/index.ts";
+import { IFetch } from "../../dom/index.ts";
 
 export type SearchRequest = {
   api_key: string
@@ -96,7 +96,7 @@ export type SearchResponse = {
 };
 
 export async function searchRequestGet(
-  fetcher: Fetcher,
+  fetcher: IFetch,
   kind: 'gifs' | 'stickers',
   options: SearchRequest
 ): Promise<SearchResponse> {

@@ -36,12 +36,13 @@ export class HomeViewModel {
       loading: kind.value,
       searchInput: kind.value,
       showFavorites: kind.value,
-      favorites: kind.object,
+      favorites: kind.value,
     })
   }
 
   async onInit() {
     this.#page = this.#giphyService.trending()
+    this.favorites = this.#giphyService.getFavorites()
     await this.nextPage()
   }
 
@@ -64,11 +65,8 @@ export class HomeViewModel {
   }
 
   toggleFavorite(data: TrendingResponseData | SearchResponseData) {
-    if (data.id in this.favorites) {
-      delete this.favorites[data.id]
-    } else {
-      this.favorites[data.id] = data
-    }
+    this.#giphyService.toggleFavorite(data)
+    this.favorites = this.#giphyService.getFavorites()
   }
 }
 

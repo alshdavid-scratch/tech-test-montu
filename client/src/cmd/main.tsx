@@ -16,7 +16,7 @@ const provider = new Map()
 const cachedFetcher = new CachedFetcher(window, 86_400_000)
 
 provider.set(Environment, Environment)
-provider.set(GiphyService, new GiphyService(cachedFetcher, Environment))
+provider.set(GiphyService, new GiphyService(cachedFetcher, Environment, window))
 
 function App() {
   return (

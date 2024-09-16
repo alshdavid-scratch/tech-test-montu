@@ -1,10 +1,10 @@
-import { Fetcher } from "./index.ts"
+import { IFetch } from "./index.ts"
 
 type CacheEntry = [number, any]
 
 // Using a Cached fetch request because GIPHY has a rate limit
 // Using during testing/development
-export class CachedFetcher implements Fetcher {
+export class CachedFetcher implements IFetch {
   #windowRef: Window
   #ttl: number
 

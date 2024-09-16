@@ -3,7 +3,7 @@
   https://api.giphy.com/v1/gifs/trending
 */
 
-import { Fetcher } from "../../dom/index.ts";
+import { IFetch } from "../../dom/index.ts";
 
 export type TrendingRequest = {
   api_key: string;
@@ -114,7 +114,7 @@ export type TrendingResponse = {
 };
 
 export async function trendingRequestGet(
-  fetcher: Fetcher,
+  fetcher: IFetch,
   kind: 'gifs' | 'stickers',
   options: TrendingRequest
 ): Promise<TrendingResponse> {
