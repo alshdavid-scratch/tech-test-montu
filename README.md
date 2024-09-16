@@ -2,7 +2,7 @@
 
 ## Demo
 
-Hosted on:
+Hosted on [http://d1i1augo6fysp9.cloudfront.net](http://d1i1augo6fysp9.cloudfront.net)
 
 ## Dependencies
 
