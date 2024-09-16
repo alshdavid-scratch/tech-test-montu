@@ -4,7 +4,7 @@
 */
 
 
-import { Fetcher, Result } from "../../dom/index.ts";
+import { Fetcher } from "../../dom/index.ts";
 
 export type SearchRequest = {
   api_key: string
@@ -62,47 +62,39 @@ export type SearchResponse = {
 export async function searchGifsRequestGet(
   fetcher: Fetcher,
   options: SearchRequest
-): Promise<Result<SearchResponse, Error>> {
-  try {
-    const query = new URLSearchParams();
-    for (const [key, value] of Object.entries(options)) {
-      query.set(key, value.toString());
-    }
-
-    const response = await fetcher.fetch(
-      `https://api.giphy.com/v1/gifs/trending?${query.toString()}`
-    );
-
-    if (!response.ok) {
-      return [undefined, new Error("Request failed")];
-    }
-    
-    return [await response.json(), undefined];
-  } catch (error: any) {
-    return [undefined, error];
+): Promise<SearchResponse> {
+  const query = new URLSearchParams();
+  for (const [key, value] of Object.entries(options)) {
+    query.set(key, value.toString());
   }
+
+  const response = await fetcher.fetch(
+    `https://api.giphy.com/v1/gifs/trending?${query.toString()}`
+  );
+
+  if (!response.ok) {
+    throw new Error("Request failed")
+  }
+  
+  return await response.json()
 }
 
 export async function searchStickersRequestGet(
   fetcher: Fetcher,
   options: SearchRequest
-): Promise<Result<SearchResponse, Error>> {
-  try {
-    const query = new URLSearchParams();
-    for (const [key, value] of Object.entries(options)) {
-      query.set(key, value.toString());
-    }
-
-    const response = await fetcher.fetch(
-      `https://api.giphy.com/v1/stickers/trending?${query.toString()}`
-    );
-
-    if (!response.ok) {
-      return [undefined, new Error("Request failed")];
-    }
-    
-    return [await response.json(), undefined];
-  } catch (error: any) {
-    return [undefined, error];
+): Promise<SearchResponse> {
+  const query = new URLSearchParams();
+  for (const [key, value] of Object.entries(options)) {
+    query.set(key, value.toString());
   }
+
+  const response = await fetcher.fetch(
+    `https://api.giphy.com/v1/stickers/trending?${query.toString()}`
+  );
+
+  if (!response.ok) {
+    throw new Error("Request failed")
+  }
+  
+  return await response.json()
 }
