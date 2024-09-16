@@ -1,0 +1,10 @@
+set windows-shell := ["pwsh", "-NoLogo", "-NoProfileLoadTime", "-Command"]
+
+build:
+  npx rspack --mode production -c ./rspack.config.cjs
+
+dev:
+  npx rspack dev -c ./rspack.config.cjs
+
+test: 
+  node --import tsx --import "./test/loaders/loader.mjs" ./test/main.ts

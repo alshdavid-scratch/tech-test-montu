@@ -1,0 +1,26 @@
+@import './scss/mixins.scss';
+@import './scss/variables.scss';
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-flow: column;
+  font-family: var(--font-family-0);
+  background-color: var(--color-grey-800);
+  color: white;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+#root {
+  display: contents;
+}
+
+
+.content-max-width {
+  @include content-max-width;
+}
+

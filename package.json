@@ -1,0 +1,25 @@
+{
+  "name": "@workspace/root",
+  "workspaces": [
+    "./client"
+  ],
+  "devDependencies": {
+    "@rspack/cli": "*",
+    "@rspack/core": "*",
+    "@types/node": "^22",
+    "css-loader": "*",
+    "date-fn": "^0.0.2",
+    "date-fns": "^3.6.0",
+    "glob": "*",
+    "google-charts": "*",
+    "happy-dom": "^15.7.4",
+    "preact": "*",
+    "preact-router": "*",
+    "sass": "*",
+    "sass-embedded": "*",
+    "sass-loader": "*",
+    "style-loader": "*",
+    "tsx": "*",
+    "typescript": "*"
+  }
+}
