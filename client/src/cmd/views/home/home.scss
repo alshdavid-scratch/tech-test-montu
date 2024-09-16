@@ -124,6 +124,12 @@
     }
   }
 
+  &.loaded {
+    .ghost {
+      animation: none;
+    }
+  }
+
 }
 
 @keyframes pulse {

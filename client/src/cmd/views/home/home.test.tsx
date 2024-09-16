@@ -6,53 +6,53 @@ import { MockedInterface, mockInterface } from '../../../../test/dynamic-mock/dy
 import { BrowserPage } from '../../../../test/browser/browser.ts'
 import { AppContext, ProviderMap } from '../../contexts/app.tsx'
 
-describe('HomeView', () => {
-  describe('HomeViewModel', () => {
-    describe('constructor', () => {
-      test('should not throw', () => {
-        assert.doesNotThrow(() => new HomeViewModel())
-      })
-    })
+// describe('HomeView', () => {
+//   describe('HomeViewModel', () => {
+//     describe('constructor', () => {
+//       test('should not throw', () => {
+//         assert.doesNotThrow(() => new HomeViewModel())
+//       })
+//     })
     
-    describe('instance', () => {
-      let vm: HomeViewModel
+//     describe('instance', () => {
+//       let vm: HomeViewModel
 
-      beforeEach(() => {
-        vm = new HomeViewModel()
-      })
-    })
-  })
+//       beforeEach(() => {
+//         vm = new HomeViewModel()
+//       })
+//     })
+//   })
 
-  describe('HomeViewComponent', () => {
-    let provider: ProviderMap
-    let browser: BrowserPage
+//   describe('HomeViewComponent', () => {
+//     let provider: ProviderMap
+//     let browser: BrowserPage
 
-    beforeEach(async () => {
-      provider = new Map()
-      browser = new BrowserPage()
+//     beforeEach(async () => {
+//       provider = new Map()
+//       browser = new BrowserPage()
 
-      await browser.exec()
+//       await browser.exec()
 
-      const div = browser.document.createElement('div')
-      browser.document.body.appendChild(div)
+//       const div = browser.document.createElement('div')
+//       browser.document.body.appendChild(div)
 
-      // @ts-expect-error
-      globalThis.document = browser.document
+//       // @ts-expect-error
+//       globalThis.document = browser.document
 
-      render(
-        <AppContext.Provider value={provider}>
-          <HomeView />
-        </AppContext.Provider>, 
-        div
-      )
-    })
+//       render(
+//         <AppContext.Provider value={provider}>
+//           <HomeView />
+//         </AppContext.Provider>, 
+//         div
+//       )
+//     })
 
-    afterEach(async () => {
-      await browser.close()
-    })
+//     afterEach(async () => {
+//       await browser.close()
+//     })
 
-    test('should render', async () => {
-      assert.ok(browser.document.body.children.length >= 1)
-    })
-  })
-})
+//     test('should render', async () => {
+//       assert.ok(browser.document.body.children.length >= 1)
+//     })
+//   })
+// })

@@ -7,6 +7,7 @@ import { Environment } from '../../../platform/environment/environment.ts';
 import { TrendingResponse } from '../../../platform/giphy-api/trending-get/trending-get.ts';
 import { makeObservable, kind } from '../../../platform/rx/index.ts';
 import { Video } from '../../components/video/video.tsx';
+import { classNames } from '../../../platform/preact/class-names.ts';
 
 export class HomeViewModel {
   #giphyService: GiphyService
@@ -61,8 +62,9 @@ export function HomeView() {
         </div>
       </nav>
 
-      <main class="view-home">
-        {/* Ghost elements */}
+      <main className={classNames("view-home", ['loaded', !vm.loading])}>
+        {/* Ghost elements, leaving them on the DOM so they
+            don't go blank before the real content loads    */}
         <div className="ghosts content-max-width">
           {Array.from(Array(vm.list.length || 50).keys()).map((_, i) => <div key={i} className="ghost"></div>)}
         </div>
