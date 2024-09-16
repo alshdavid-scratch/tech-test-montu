@@ -10,13 +10,16 @@ import { classNames } from '../../../platform/preact/class-names.ts';
 import { Intersector } from '../../components/intersector/intersector.tsx';
 import { SearchResponseData } from '../../../platform/giphy-api/search-get/search-get.ts';
 import { Input } from '../../components/input/input.tsx';
+import { Icon } from '../../components/icon/icon.tsx';
 
 export class HomeViewModel {
   #giphyService: GiphyService
   #page: AsyncIterableIterator<TrendingResponseData[] | SearchResponseData[]> | undefined
   list: Array<TrendingResponseData | SearchResponseData>
   loading: boolean
+  showFavorites: boolean
   searchInput: string
+  favorites: Record<string, TrendingResponseData | SearchResponseData>
 
   constructor(
     giphyService: GiphyService
@@ -24,12 +27,16 @@ export class HomeViewModel {
     this.#giphyService = giphyService
     this.list = []
     this.loading = false
+    this.showFavorites = false
     this.searchInput = ''
+    this.favorites = {}
 
     makeObservable(this, {
       list: kind.array,
       loading: kind.value,
       searchInput: kind.value,
+      showFavorites: kind.value,
+      favorites: kind.object,
     })
   }
 
@@ -55,6 +62,14 @@ export class HomeViewModel {
     }
     await this.nextPage()
   }
+
+  toggleFavorite(data: TrendingResponseData | SearchResponseData) {
+    if (data.id in this.favorites) {
+      delete this.favorites[data.id]
+    } else {
+      this.favorites[data.id] = data
+    }
+  }
 }
 
 export function HomeView() {
@@ -68,9 +83,17 @@ export function HomeView() {
           <div>
             <div class="logo">STUDIO GIFLY</div>
           </div>
-          <a href="https://github.com/alshdavid-scratch/tech-test-montu">
-            <img src="/assets/github.svg" />
-          </a>
+          <div className="quick-menu">
+            <Icon 
+              kind='heart' 
+              variant='solid'
+              className={classNames('show-favorites', ['active', vm.showFavorites])} 
+              onClick={() => vm.showFavorites = !vm.showFavorites}/>
+
+            <a href="https://github.com/alshdavid-scratch/tech-test-montu">
+              <img src="/assets/github.svg" />
+            </a>
+          </div>
         </div>
       </nav>
 
@@ -93,12 +116,20 @@ export function HomeView() {
         {/* Ghost elements, leaving them on the DOM so they
             don't go blank before the real content loads.   */}
         <div className="ghosts content-max-width">
-          {Array.from(Array(vm.list.length || 50).keys()).map((_, i) => <div key={i} className="ghost"></div>)}
+          {!vm.showFavorites && Array.from(Array(vm.list.length || 50).keys()).map((_, i) => <div key={i} className="ghost"></div>)}
         </div>
 
         <div className="images content-max-width">
-        {vm.list.map(result => (
+        {(vm.showFavorites ? Object.values(vm.favorites) : vm.list).map(result => (
           <div key={result.id} className="image-container">
+            <button 
+              className={classNames('favorite', ['selected', result.id in vm.favorites])} 
+              onClick={() => vm.toggleFavorite(result)}>
+              <Icon kind='heart' variant="solid" />
+            </button>
+            <a
+              href={result.url!}
+              target="_blank"></a>
             <Video 
               src={result.images.fixed_width.mp4!} 
               poster={result.images.fixed_width_still.url} />
@@ -107,9 +138,9 @@ export function HomeView() {
         </div>
       </main>
 
-      <Intersector 
+      {!vm.showFavorites && !vm.loading && <Intersector 
         onEnter={() => vm.nextPage()}
         rootMargin={window.screen.height + 'px'}
-        />
+        />}
     </Fragment>)
 }

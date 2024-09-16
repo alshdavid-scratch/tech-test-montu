@@ -13,6 +13,35 @@
     @include desktop {
       padding: 0 var(--spacing-1);
     }
+
+    .quick-menu {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .show-favorites {
+        height: 35px;
+        width: 35px;
+        cursor: pointer;
+        opacity: 0.7;
+        
+        svg {
+          fill: var(--color-yellow-500)
+        }
+
+        &.active {
+          opacity: 1;
+        }
+      }
+
+      &>* {
+        margin-right: var(--spacing-4);
+
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+    }
   }
 
   & .logo {
@@ -104,6 +133,59 @@
 
   .image-container {
     cursor: pointer;
+
+    a, .favorite {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+
+    a {
+      left: 0;
+      bottom: 0;
+      z-index: 3;
+    }
+
+    .favorite {
+      position: absolute;
+      z-index: 4;
+      padding: var(--spacing-4);
+      cursor: pointer;
+      background-color: transparent;
+      border: none;
+
+      &.selected .component-icon svg {
+        fill: rgba(red, 1);
+        transform: scale(130%);
+
+        &:hover svg {
+          fill: rgba(red, 1);
+          transform: scale(130%);
+        }
+      }
+      
+      .component-icon {
+        height: 20px;
+        width: 20px;        
+
+        svg {
+          fill: rgba(red, 0.4);
+          transition: fill 0.25s ease-in-out, transform 0.25s ease-in-out;
+        }
+
+        &:hover svg {
+          fill: rgba(red, 0.7);
+          transform: scale(130%);
+        }
+
+        &:active svg {
+          fill: rgba(red, 0.7);
+          transform: scale(80%);
+          transition: none;
+        }
+      }
+    }
+
   }
 
   .ghosts {

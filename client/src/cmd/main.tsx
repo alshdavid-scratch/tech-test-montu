@@ -6,7 +6,7 @@ import { GiphyService } from '../platform/giphy/giphy-service.ts'
 import { Environment } from '../platform/environment/environment.ts'
 import { CachedFetcher } from '../platform/dom/cahced-fetch.ts'
 
-
+import './components/icon/icon.tsx'
 // DI system using React context
 const provider = new Map()
 

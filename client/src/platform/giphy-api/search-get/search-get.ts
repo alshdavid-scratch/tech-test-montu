@@ -76,7 +76,7 @@ export type SearchResponseData = {
   title: string
   trending_datetime: string
   type: string
-  url: {}
+  url: string
   user: string
   username: string
 }
