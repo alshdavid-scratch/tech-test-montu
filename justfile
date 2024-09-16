@@ -3,8 +3,8 @@ set windows-shell := ["pwsh", "-NoLogo", "-NoProfileLoadTime", "-Command"]
 build:
   cd client && just build
 
-dev:
-  cd client && just dev
+dev *ARGS:
+  cd client && just dev {{ARGS}}
 
 test:
   cd client && just test

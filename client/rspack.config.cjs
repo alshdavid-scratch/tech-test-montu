@@ -1,10 +1,13 @@
 const path = require('path')
 const fs = require('fs')
-const { HtmlRspackPlugin, CopyRspackPlugin, CssExtractRspackPlugin } = require('@rspack/core')
+const { HtmlRspackPlugin, CopyRspackPlugin, CssExtractRspackPlugin, DefinePlugin } = require('@rspack/core')
+const { argv } = require('process')
 
 if (fs.existsSync(path.join(__dirname, 'dist'))) {
   fs.rmSync(path.join(__dirname, 'dist'), { recursive: true })
 }
+
+const production = argv.includes('production')
 
 /** @type {import('@rspack/core').Configuration} */
 const config = {
@@ -55,6 +58,11 @@ const config = {
     ]
   },
   plugins: [
+    new DefinePlugin({
+      production,
+      // ...Should probably hide this in the back end
+      giphyApiKey: JSON.stringify('CPJRzUOWCUpbPlpeTJ8BgmnTU9Of5yK7')
+    }),
     new CssExtractRspackPlugin({}),
     new HtmlRspackPlugin({
       filename: 'index.html',

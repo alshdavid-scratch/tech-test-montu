@@ -42,6 +42,11 @@
 .search {
   padding: var(--spacing-3) 0 var(--spacing-4);
   background-color: var(--color-brand);
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
 
   &>div {
     display: flex;
@@ -67,16 +72,62 @@
 
 .view-home {
   flex: 1;
+  position: relative;
+
+  .images, 
+  .ghosts {
+    padding-top: var(--spacing-1);
+    display: grid;
+    grid-template-columns: auto;
+    gap: var(--spacing-1);
+    position: relative;
+    z-index: 2;
+
+    @include tablet {
+      grid-template-columns: auto auto;
+    }
+
+    @include desktop {
+      grid-template-columns: auto auto auto;
+    }
+
+    .image-container, 
+    .ghost {
+      position: relative;
+      height: 300px;
+      z-index: 2;
+
+      .component-video {
+        position: absolute;
+        inset: 0;
+        object-fit: cover;
+        height: 100%;
+        width: 100%;
+      }
+    }
+  }
+
+  .image-container {
+    cursor: pointer;
+  }
+
+  .ghosts {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 1;
+    
+    .ghost {
+      background-color: var(--color-grey-500);
+      animation: pulse 0.5s ease-in infinite;
+      z-index: 1;
+    }
+  }
+
 }
 
-footer {
-  background-color: var(--color-brand);
-  padding: var(--spacing-4) 0;
-  margin-top: var(--spacing-4);
-  
-  .author {
-    display: flex;
-    justify-content: flex-end;
-    color: var(--color-grey-500)
-  }
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.8; }
+  100% { opacity: 1; }
 }

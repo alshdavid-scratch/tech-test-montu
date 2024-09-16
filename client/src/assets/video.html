@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <video autoplay muted loop></video>
+  <script>
+    const options = JSON.parse(window.name)
+    const v = document.querySelector('video')
+    for (const [key, value] of Object.entries(options)) {
+      v.setAttribute(key, value)
+    }
+  </script>
+  <style>
+    body {
+      box-sizing: content-box;
+      margin: 0;
+    }
+
+    video {
+      position: absolute;
+      inset: 0;
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+    }
+
+  </style>
+</body>
+</html>

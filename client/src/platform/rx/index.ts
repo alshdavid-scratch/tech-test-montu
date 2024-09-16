@@ -1,5 +1,6 @@
-// This is a rip off of mobx that's slightly nicer to use
-
+// This is my DIY version of MobX. There are
+// lots of improvements to make for performance, 
+// but it does the trick for now
 
 export type kind = typeof kind[keyof typeof kind];
 export const kind = Object.freeze({
@@ -10,14 +11,20 @@ export const kind = Object.freeze({
   value: Symbol('value'),
 })
 
+export type KeyType = string | number | symbol
+
 const Observe = Symbol('Observe')
 
-export function makeObservable(target: any, properties: Record<string | number | symbol, kind>) {
+export function makeObservable<T, K extends keyof T>(target: T, properties: { [U in K]: kind }) {
+  const targetInner: any = target
   const inner: Record<string | number | symbol, any> = {}
   const observer = new EventTarget
 
   let emitting = false
   let queue: string[][] = []
+
+  // Send the first event then batch all
+  // subsequent events in 10ms intervals
   function emit(...keys: string[][]) {
     if (emitting === true) {
       queue.push(...keys)
@@ -37,15 +44,15 @@ export function makeObservable(target: any, properties: Record<string | number |
     }, 10)
   }
 
-  Object.defineProperty(target, Observe, {
+  Object.defineProperty(targetInner, Observe, {
     value: observer
   })
 
   for (const [key, k] of Object.entries(properties)) {
-    inner[key] = target[key]
+    inner[key] = targetInner[key]
     
     if (k === kind.value) {
-      Object.defineProperty(target, key, {
+      Object.defineProperty(targetInner, key, {
         get() {
           return inner[key]
         },
@@ -56,9 +63,9 @@ export function makeObservable(target: any, properties: Record<string | number |
       })
     }
     else if (k === kind.array || k === kind.object) {
-      inner[key] = buildProxy(target[key], (keys: any) => emit(keys))
+      inner[key] = buildProxy(targetInner[key], (keys: any) => emit(keys))
 
-      Object.defineProperty(target, key, {
+      Object.defineProperty(targetInner, key, {
         get() {
           return inner[key]
         },

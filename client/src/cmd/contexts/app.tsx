@@ -10,7 +10,7 @@ export function useAppContext(): Map<any, unknown> {
 }
 
 export function useInject<C extends new (...args: any[]) => any>(key: C): InstanceType<C>
-export function useInject<T extends unknown>(key: any): T
+export function useInject<T>(key: T): T
 export function useInject<T extends unknown>(key: any): T {
   const target = useContext(AppContext).get(key)
   if (!target) {

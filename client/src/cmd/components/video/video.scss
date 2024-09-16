@@ -1,0 +1,19 @@
+.component-video {
+  display: block;
+  position: relative;
+
+  iframe, img {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+
+  &.loaded {
+    img {
+      display: none;
+    }
+  }
+}

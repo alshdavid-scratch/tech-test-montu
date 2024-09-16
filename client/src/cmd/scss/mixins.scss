@@ -1,4 +1,5 @@
 $page-width: 1024px;
+$page-width-tablet: 600px;
 
 @mixin content-max-width {
   @include mobile() {
@@ -14,6 +15,12 @@ $page-width: 1024px;
 
 @mixin desktop {
   @media (min-width: #{$page-width + 1}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: #{$page-width-tablet}) {
     @content;
   }
 }
