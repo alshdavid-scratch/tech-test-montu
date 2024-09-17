@@ -3,6 +3,8 @@ import { Environment } from "../environment/environment.ts";
 import { searchRequestGet, SearchRequest, SearchResponseData } from "../giphy-api/search-get/search-get.ts";
 import { trendingRequestGet, TrendingRequest, TrendingResponseData } from "../giphy-api/trending-get/trending-get.ts";
 
+export type IGiphyService = Omit<GiphyService, `#${string}`>
+
 export class GiphyService {
   #fetch: IFetch
   #env: Environment

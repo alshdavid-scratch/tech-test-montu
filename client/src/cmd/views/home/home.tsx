@@ -1,7 +1,7 @@
 import './home.scss'
 import { h, Fragment } from "preact";
 import { useViewModel } from '../../../platform/rx/preact.ts';
-import { GiphyService } from '../../../platform/giphy/giphy-service.ts';
+import { GiphyService, IGiphyService } from '../../../platform/giphy/giphy-service.ts';
 import { useInject } from '../../contexts/app.tsx';
 import { TrendingResponseData } from '../../../platform/giphy-api/trending-get/trending-get.ts';
 import { makeObservable, kind } from '../../../platform/rx/index.ts';
@@ -11,9 +11,10 @@ import { Intersector } from '../../components/intersector/intersector.tsx';
 import { SearchResponseData } from '../../../platform/giphy-api/search-get/search-get.ts';
 import { Input } from '../../components/input/input.tsx';
 import { Icon } from '../../components/icon/icon.tsx';
+import { WindowToken } from '../../../platform/dom/index.ts';
 
 export class HomeViewModel {
-  #giphyService: GiphyService
+  #giphyService: IGiphyService
   #page: AsyncIterableIterator<TrendingResponseData[] | SearchResponseData[]> | undefined
   list: Array<TrendingResponseData | SearchResponseData>
   loading: boolean
@@ -22,7 +23,7 @@ export class HomeViewModel {
   favorites: Record<string, TrendingResponseData | SearchResponseData>
 
   constructor(
-    giphyService: GiphyService
+    giphyService: IGiphyService
   ) {
     this.#giphyService = giphyService
     this.list = []
@@ -71,6 +72,7 @@ export class HomeViewModel {
 }
 
 export function HomeView() {
+  const windowRef = useInject<Window>(WindowToken)
   const giphyService = useInject(GiphyService)
   const vm = useViewModel(() => new HomeViewModel(giphyService))
 
@@ -138,7 +140,7 @@ export function HomeView() {
 
       {!vm.showFavorites && !vm.loading && <Intersector 
         onEnter={() => vm.nextPage()}
-        rootMargin={window.screen.height + 'px'}
+        rootMargin={windowRef.screen.height + 'px'}
         />}
     </Fragment>)
 }

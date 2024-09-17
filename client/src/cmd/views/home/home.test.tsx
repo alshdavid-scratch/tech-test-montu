@@ -5,54 +5,67 @@ import { HomeViewModel, HomeView } from './home.tsx'
 import { MockedInterface, mockInterface } from '../../../../test/dynamic-mock/dynamic-mock.ts'
 import { BrowserPage } from '../../../../test/browser/browser.ts'
 import { AppContext, ProviderMap } from '../../contexts/app.tsx'
+import { GiphyService, IGiphyService } from '../../../platform/giphy/giphy-service.ts'
+import { WindowToken } from '../../../platform/dom/index.ts'
 
-// describe('HomeView', () => {
-//   describe('HomeViewModel', () => {
-//     describe('constructor', () => {
-//       test('should not throw', () => {
-//         assert.doesNotThrow(() => new HomeViewModel())
-//       })
-//     })
+describe('HomeView', () => {
+  let giphyService: MockedInterface<IGiphyService>
+  let windowRef: MockedInterface<Window>
+
+  describe('HomeViewModel', () => {
+    beforeEach(() => {
+      giphyService = mockInterface()
+    })
+
+    describe('constructor', () => {
+      test('should not throw', () => {
+        assert.doesNotThrow(() => new HomeViewModel(giphyService))
+      })
+    })
     
-//     describe('instance', () => {
-//       let vm: HomeViewModel
+    describe('instance', () => {
+      let vm: HomeViewModel
 
-//       beforeEach(() => {
-//         vm = new HomeViewModel()
-//       })
-//     })
-//   })
+      beforeEach(() => {
+        vm = new HomeViewModel(giphyService)
+      })
+    })
+  })
 
-//   describe('HomeViewComponent', () => {
-//     let provider: ProviderMap
-//     let browser: BrowserPage
+  describe('HomeViewComponent', () => {
+    let provider: ProviderMap
+    let browser: BrowserPage
 
-//     beforeEach(async () => {
-//       provider = new Map()
-//       browser = new BrowserPage()
+    beforeEach(async () => {
+      provider = new Map()
+      browser = new BrowserPage()
 
-//       await browser.exec()
+      await browser.exec()
+      const div = browser.document.createElement('div')
+      browser.document.body.appendChild(div)
 
-//       const div = browser.document.createElement('div')
-//       browser.document.body.appendChild(div)
+      // @ts-expect-error
+      globalThis.document = browser.document
+      // @ts-expect-error
+      globalThis.window = browser.window
 
-//       // @ts-expect-error
-//       globalThis.document = browser.document
+      provider.set(GiphyService, giphyService)
+      provider.set(WindowToken, windowRef)
 
-//       render(
-//         <AppContext.Provider value={provider}>
-//           <HomeView />
-//         </AppContext.Provider>, 
-//         div
-//       )
-//     })
+      render(
+        <AppContext.Provider value={provider}>
+          <HomeView />
+        </AppContext.Provider>, 
+        div
+      )
+    })
 
-//     afterEach(async () => {
-//       await browser.close()
-//     })
+    afterEach(async () => {
+      await browser.close()
+    })
 
-//     test('should render', async () => {
-//       assert.ok(browser.document.body.children.length >= 1)
-//     })
-//   })
-// })
+    test('should render', async () => {
+      assert.ok(browser.document.body.children.length >= 1)
+    })
+  })
+})

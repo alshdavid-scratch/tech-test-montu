@@ -7,16 +7,18 @@ import { Environment } from '../platform/environment/environment.ts'
 import { CachedFetcher } from '../platform/dom/cahced-fetch.ts'
 
 import './components/icon/icon.tsx'
+import { WindowToken } from '../platform/dom/index.ts'
 // DI system using React context
 const provider = new Map()
 
 // Cache requests for 24 hours
 // I need this because the GIPHY has a
 // rate limit of 100 requests per month lol
-const cachedFetcher = new CachedFetcher(window, 86_400_000)
+const cachedFetcher = new CachedFetcher(globalThis, 86_400_000)
 
+provider.set(WindowToken, globalThis)
 provider.set(Environment, Environment)
-provider.set(GiphyService, new GiphyService(cachedFetcher, Environment, window))
+provider.set(GiphyService, new GiphyService(cachedFetcher, Environment, globalThis))
 
 function App() {
   return (
