@@ -44,7 +44,7 @@ export class GiphyService {
     }, 0))
   }
 
-  async *search(query: string, kind: 'gifs' | 'stickers' = 'gifs', options: Omit<SearchRequest, 'api_key'|'q'|'offset'> = {}): AsyncIterableIterator<SearchResponseData[]> {
+  async *search(query: string, kind: 'gifs' | 'stickers' = 'gifs', options: Omit<SearchRequest, 'api_key'|'q'|'offset' | 'limit'> = {}): AsyncIterableIterator<SearchResponseData[]> {
     let offset = 0
 
     while (true) {
@@ -52,6 +52,7 @@ export class GiphyService {
         api_key: this.#env.giphyApiKey,
         q: query,
         offset,
+        limit: '20',
         ...options
       })
 
@@ -60,13 +61,14 @@ export class GiphyService {
     }
   }
 
-  async *trending(kind: 'gifs' | 'stickers' = 'gifs', options: Omit<TrendingRequest, 'api_key' | 'offset'> = {}): AsyncIterableIterator<TrendingResponseData[]> {
+  async *trending(kind: 'gifs' | 'stickers' = 'gifs', options: Omit<TrendingRequest, 'api_key' | 'offset' | 'limit'> = {}): AsyncIterableIterator<TrendingResponseData[]> {
     let offset = 0
 
     while (true) {
       const result = await trendingRequestGet(this.#fetch, kind, {
         api_key: this.#env.giphyApiKey,
         offset,
+        limit: '20',
         ...options
       })
 
