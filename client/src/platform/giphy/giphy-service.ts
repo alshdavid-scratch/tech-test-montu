@@ -52,7 +52,7 @@ export class GiphyService {
         api_key: this.#env.giphyApiKey,
         q: query,
         offset,
-        limit: '20',
+        limit: 20,
         ...options
       })
 
