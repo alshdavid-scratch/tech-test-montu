@@ -9,11 +9,17 @@ export class BrowserPage {
   #observers: Set<(value: MutationRecord[]) => any | Promise<any>>
 
   get window(): Window {
-    return this.#windowRef!
+    if (!this.#windowRef) {
+      throw new Error('Browser not initialized')
+    }
+    return this.#windowRef
   }
 
   get document(): Document {
-    return this.#windowRef!.document
+    if (!this.#windowRef) {
+      throw new Error('Browser not initialized')
+    }
+    return this.#windowRef.document
   }
 
   constructor(html: string = DEFAULT_DOM) {

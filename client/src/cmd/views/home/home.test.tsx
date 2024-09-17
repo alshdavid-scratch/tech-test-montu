@@ -7,16 +7,16 @@ import { BrowserPage } from '../../../../test/browser/browser.ts'
 import { AppContext, ProviderMap } from '../../contexts/app.tsx'
 import { GiphyService, IGiphyService } from '../../../platform/giphy/giphy-service.ts'
 import { WindowToken } from '../../../platform/dom/index.ts'
+import { HTMLDivElement } from 'happy-dom'
 
 describe('HomeView', () => {
   let giphyService: MockedInterface<IGiphyService>
-  let windowRef: MockedInterface<Window>
+
+  beforeEach(() => {
+    giphyService = mockInterface()
+  })
 
   describe('HomeViewModel', () => {
-    beforeEach(() => {
-      giphyService = mockInterface()
-    })
-
     describe('constructor', () => {
       test('should not throw', () => {
         assert.doesNotThrow(() => new HomeViewModel(giphyService))
@@ -35,28 +35,27 @@ describe('HomeView', () => {
   describe('HomeViewComponent', () => {
     let provider: ProviderMap
     let browser: BrowserPage
+    let outlet: HTMLDivElement
 
     beforeEach(async () => {
       provider = new Map()
       browser = new BrowserPage()
 
       await browser.exec()
-      const div = browser.document.createElement('div')
-      browser.document.body.appendChild(div)
+      outlet = browser.document.createElement('div')
+      browser.document.body.appendChild(outlet)
 
       // @ts-expect-error
       globalThis.document = browser.document
-      // @ts-expect-error
-      globalThis.window = browser.window
 
       provider.set(GiphyService, giphyService)
-      provider.set(WindowToken, windowRef)
+      provider.set(WindowToken, browser.window)
 
       render(
         <AppContext.Provider value={provider}>
           <HomeView />
         </AppContext.Provider>, 
-        div
+        outlet
       )
     })
 
@@ -65,7 +64,7 @@ describe('HomeView', () => {
     })
 
     test('should render', async () => {
-      assert.ok(browser.document.body.children.length >= 1)
+      assert.ok(outlet.children.length >= 1)
     })
   })
 })

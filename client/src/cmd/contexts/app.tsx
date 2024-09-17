@@ -14,7 +14,11 @@ export function useInject<T>(key: any): T
 export function useInject<T extends unknown>(key: any): T {
   const target = useContext(AppContext).get(key)
   if (!target) {
-    throw new Error(`Nothing provided for key ${key}`)
+    try {
+      throw new Error(`[PROVIDER] Nothing provided for ${key}`)
+    } catch (error) {
+      throw new Error(`[PROVIDER] Nothing provided for |failed to parse|`)
+    }
   }
 
   return target

@@ -1,6 +1,8 @@
 import { h } from "preact"
 import { classNames } from "../../../platform/preact/class-names.ts"
 import { useEffect, useRef, useState } from "preact/hooks"
+import { useInject } from "../../contexts/app.tsx"
+import { WindowToken } from "../../../platform/dom/index.ts"
 
 export type IntersectorProps = h.JSX.HTMLAttributes<HTMLDivElement> & {
   onEnter?: () => any | Promise<any>
@@ -18,17 +20,18 @@ export type IntersectorProps = h.JSX.HTMLAttributes<HTMLDivElement> & {
 export function Intersector({ onEnter, onExit, rootMargin, threshold, root, className,  children, ...props }: IntersectorProps) {
   const containerRef = useRef(null)
   const [isVisible, setIsVisible] = useState(false)
+  const windowRef = useInject<Window>(WindowToken)
 
   useEffect(() => {
     if (containerRef.current) {
-      setIsVisible(checkVisible(containerRef.current))
+      setIsVisible(checkVisible(windowRef, containerRef.current))
     }
   }, [containerRef, onEnter, onExit, children, rootMargin, threshold, root, className])
 
   useEffect(() => {
     if (!containerRef.current) return
 
-    const observer = new IntersectionObserver((e) => {
+    const observer = new (windowRef as any).IntersectionObserver((e: IntersectionObserverEntry[]) => {
       if (e[0].isIntersecting) {
         setIsVisible(true)
         onEnter && onEnter()
@@ -47,8 +50,6 @@ export function Intersector({ onEnter, onExit, rootMargin, threshold, root, clas
     return () => observer.disconnect()
   }, [containerRef, onEnter, onExit, children, rootMargin, threshold, root, className])
 
-  
-
   return <div 
     {...props} 
     ref={containerRef} 
@@ -57,8 +58,10 @@ export function Intersector({ onEnter, onExit, rootMargin, threshold, root, clas
     </div>
 }
 
-function checkVisible(elm: HTMLDivElement) {
+function checkVisible(windowRef: Window, elm: HTMLDivElement) {
   var rect = elm.getBoundingClientRect();
-  var viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
+  const clientHeight = windowRef.document.documentElement.clientHeight
+  const innerHeight = windowRef.screen.height
+  var viewHeight = Math.max(clientHeight, innerHeight);
   return !(rect.bottom < 0 || rect.top - viewHeight >= 0);
 }
