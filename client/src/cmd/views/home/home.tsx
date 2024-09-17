@@ -42,7 +42,7 @@ export class HomeViewModel {
 
   async onInit() {
     this.#page = this.#giphyService.trending()
-    this.favorites = this.#giphyService.getFavorites()
+    this.favorites = await this.#giphyService.getFavorites()
     await this.nextPage()
   }
 
@@ -64,9 +64,9 @@ export class HomeViewModel {
     await this.nextPage()
   }
 
-  toggleFavorite(data: TrendingResponseData | SearchResponseData) {
+  async toggleFavorite(data: TrendingResponseData | SearchResponseData) {
     this.#giphyService.toggleFavorite(data)
-    this.favorites = this.#giphyService.getFavorites()
+    this.favorites = await this.#giphyService.getFavorites()
   }
 }
 

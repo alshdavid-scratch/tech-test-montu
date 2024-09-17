@@ -11,7 +11,7 @@ const production = argv.includes('production')
 
 /** @type {import('@rspack/core').Configuration} */
 const config = {
-  devtool: false,
+  devtool: production ? false : 'eval',
   experiments: {
   },
   entry:  path.join(__dirname, 'src', 'cmd', 'main.tsx'),

@@ -19,22 +19,27 @@ export class GiphyService {
     this.#env = env
   }
 
-  toggleFavorite(data: SearchResponseData | TrendingResponseData) {
-    const favorites: Record<string, SearchResponseData | TrendingResponseData> = JSON.parse(this.#localStorage.localStorage.getItem('favorites') || '{}')
-    if (data.id in favorites) {
-      delete favorites[data.id]
-    } else {
-      favorites[data.id] = data
-    }
-    this.#favorites = favorites
-    this.#localStorage.localStorage.setItem('favorites', JSON.stringify(favorites))
+  async toggleFavorite(data: SearchResponseData | TrendingResponseData): Promise<void> {
+    return new Promise(res => setTimeout(() => {
+      const favorites: Record<string, SearchResponseData | TrendingResponseData> = JSON.parse(this.#localStorage.localStorage.getItem('favorites') || '{}')
+      if (data.id in favorites) {
+        delete favorites[data.id]
+      } else {
+        favorites[data.id] = data
+      }
+      this.#favorites = favorites
+      this.#localStorage.localStorage.setItem('favorites', JSON.stringify(favorites))
+      res()
+    }))
   }
 
-  getFavorites(): Record<string, SearchResponseData | TrendingResponseData> {
-    if (!this.#favorites) {
-      this.#favorites = JSON.parse(this.#localStorage.localStorage.getItem('favorites') || '{}')
-    }
-    return this.#favorites!
+  getFavorites(): Promise<Record<string, SearchResponseData | TrendingResponseData>> {
+    return new Promise(res => setTimeout(() => {
+      if (!this.#favorites) {
+        this.#favorites = JSON.parse(this.#localStorage.localStorage.getItem('favorites') || '{}')
+      }
+      res(this.#favorites!)
+    }, 0))
   }
 
   async *search(query: string, kind: 'gifs' | 'stickers' = 'gifs', options: Omit<SearchRequest, 'api_key'|'q'|'offset'> = {}): AsyncIterableIterator<SearchResponseData[]> {
