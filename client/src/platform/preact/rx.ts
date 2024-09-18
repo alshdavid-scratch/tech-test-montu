@@ -1,47 +1,118 @@
-import { useEffect, useMemo, useReducer } from "preact/hooks"
+// This is my DIY version of MobX. There are
+// lots of improvements to make for performance, 
+// but it does the trick for now
 
-export interface RxOnInit {
-  onInit?(): any | Promise<any>
-}
+export type ChangeType = typeof ChangeType[keyof typeof ChangeType];
+export const ChangeType = Object.freeze({
+  Proxy: Symbol('proxy'),
+  Push: Symbol('push'),
+})
 
-const eventName = 'rx:change'
+export type KeyType = string | number | symbol
 
-export class RxEvent extends CustomEvent<Set<string>> {
-  constructor(keys: Set<string>) {
-    super(eventName, { detail: keys })
-  }
+const Observe = Symbol('Observe')
 
-  static emit(target: EventTarget, ...keys: Array<string>) {
-    target.dispatchEvent(new RxEvent(new Set(keys)))
-  }
-}
+export function makeObservable<T, K extends keyof T>(target: T, properties: { [U in K]: ChangeType }) {
+  const targetInner: any = target
+  const inner: Record<string | number | symbol, any> = {}
+  const observer = new EventTarget
 
-export const useReactive = <T extends EventTarget, K extends keyof T>(ctor: () => T, ...properties: Array<K>): T => {
-  const o = useMemo(ctor, [])
-  const forceUpdate = useReducer(() => ({}), {})[1] as () => void
-  
-  useEffect(() => {
-    const watching: Partial<Record<K, boolean>> = {}
+  let emitting = false
+  let queue: string[][] = []
 
-    console.log(watching)
-    for (const key of properties) {
-      watching[key] = true
+  // Send the first event then batch all
+  // subsequent events in 10ms intervals
+  function emit(...keys: string[][]) {
+    if (emitting === true) {
+      queue.push(...keys)
+      return
     }
+    emitting = true
+    
+    observer.dispatchEvent(new CustomEvent('change', { detail: keys }))
 
-    const fn = ({ detail }: RxEvent) => {
-      for (const key of detail.values()) {
-        if (!(key in watching)) continue
-        forceUpdate()
-        break
+    setTimeout(() => {
+      emitting = false
+      if (queue.length) {
+        const q = queue
+        queue = []
+        emit(...q)
       }
+    }, 10)
+  }
+
+  Object.defineProperty(targetInner, Observe, {
+    enumerable: false,
+    writable: false,
+    value: observer
+  })
+
+  for (const [key, k] of Object.entries(properties)) {
+    inner[key] = targetInner[key]
+    
+    if (k === ChangeType.Push) {
+      Object.defineProperty(targetInner, key, {
+        get() {
+          return inner[key]
+        },
+        set(value: any) {
+          inner[key] = value
+          emit([key, k as any])
+        },
+      })
     }
+    else if (k === ChangeType.Proxy) {
+      inner[key] = buildProxy(targetInner[key], (keys: any) => emit(keys))
 
-    //@ts-expect-error
-    o.onInit && o.onInit()
+      Object.defineProperty(targetInner, key, {
+        get() {
+          return inner[key]
+        },
+        set(value: any) {
+          inner[key] = buildProxy(value, (keys: any) => emit(keys))
+          emit([key])
+        },
+      })      
+    }
+  }
+}
 
-    o.addEventListener(eventName, fn as any)
-    return () => o.removeEventListener(eventName, fn as any)
-  }, [...properties])
+export function notifyChange(target: any, ...keys: string[]) {
+  target[Observe].dispatchEvent(new CustomEvent('change', { detail: keys }))
+}
 
-  return o
+function buildProxy(poj: any, callback: any, tree: any = []) {
+  return new Proxy(poj, {
+    get: (target, prop)  =>{
+      const value = Reflect.get(target, prop);
+
+      if (
+        value &&
+        typeof value === "object" &&
+        ["Array", "Object"].includes(value.constructor.name)
+      )
+        return buildProxy(value, callback, tree.concat(prop));
+
+      return value;
+    },
+
+    set: (target, prop, value) => {
+      callback(tree.concat(prop));
+      return Reflect.set(target, prop, value);
+    },
+
+    deleteProperty: (target, prop) => {
+      callback(tree.concat(prop));
+      return Reflect.deleteProperty(target, prop);
+    },
+  });
+}
+
+export function subscribe(target: any, callback: (key: string) => any | Promise<any>): () => void {
+  if (!(Observe in target)) {
+    return () => {}
+  }
+  const fn = ({ detail }: CustomEvent) => callback(detail)
+  target[Observe].addEventListener('change', fn)
+  return () => target[Observe].removeEventListener('change', fn)
 }

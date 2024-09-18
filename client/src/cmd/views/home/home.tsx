@@ -1,8 +1,10 @@
 import './home.scss'
 import { h, Fragment } from "preact";
+import { useViewModel } from '../../../platform/preact/rx-preact.ts';
 import { GiphyService, IGiphyService } from '../../../platform/giphy/giphy-service.ts';
 import { useInject } from '../../contexts/app.tsx';
 import { TrendingResponseData } from '../../../platform/giphy-api/trending-get/trending-get.ts';
+import { makeObservable, ChangeType, notifyChange } from '../../../platform/preact/rx.ts';
 import { Video } from '../../components/video/video.tsx';
 import { classNames } from '../../../platform/preact/class-names.ts';
 import { Intersector } from '../../components/intersector/intersector.tsx';
@@ -10,63 +12,33 @@ import { SearchResponseData } from '../../../platform/giphy-api/search-get/searc
 import { Input } from '../../components/input/input.tsx';
 import { Icon } from '../../components/icon/icon.tsx';
 import { WindowToken } from '../../../platform/dom/index.ts';
-import { RxEvent, useReactive } from '../../../platform/preact/rx.ts';
 
-export class HomeViewModel extends EventTarget {
+export class HomeViewModel {
   #giphyService: IGiphyService
   #page: AsyncIterableIterator<TrendingResponseData[] | SearchResponseData[]> | undefined
-  #searchInput: string
-  #loading: boolean
-  #showFavorites: boolean
-  #favorites: Record<string, TrendingResponseData | SearchResponseData>
   list: Array<TrendingResponseData | SearchResponseData>
-  
-  get searchInput() {
-    return this.#searchInput
-  }
-
-  set searchInput(value) {
-    this.#searchInput = value
-    RxEvent.emit(this, 'searchInput')
-  }
-
-  get showFavorites() {
-    return this.#showFavorites
-  }
-
-  set showFavorites(value) {
-    this.#showFavorites = value
-    RxEvent.emit(this, 'showFavorites')
-  }
-
-  get loading() {
-    return this.#loading
-  }
-
-  set loading(value) {
-    this.#loading = value
-    RxEvent.emit(this, 'loading')
-  }
-
-  get favorites() {
-    return this.#favorites
-  }
-
-  set favorites(value) {
-    this.#favorites = value
-    RxEvent.emit(this, 'favorites')
-  }
+  loading: boolean
+  showFavorites: boolean
+  searchInput: string
+  favorites: Record<string, TrendingResponseData | SearchResponseData>
 
   constructor(
     giphyService: IGiphyService
   ) {
-    super()
     this.#giphyService = giphyService
     this.list = []
-    this.#loading = false
-    this.#showFavorites = false
-    this.#searchInput = ''
-    this.#favorites = {}
+    this.loading = false
+    this.showFavorites = false
+    this.searchInput = ''
+    this.favorites = {}
+
+    makeObservable(this, {
+      list: ChangeType.Push,
+      loading: ChangeType.Push,
+      searchInput: ChangeType.Push,
+      showFavorites: ChangeType.Push,
+      favorites: ChangeType.Push,
+    })
   }
 
   async onInit() {
@@ -82,7 +54,7 @@ export class HomeViewModel extends EventTarget {
     this.loading = true
     await new Promise(res => setTimeout(res, 500)) // Added lag for dramatic effect
     this.list.push(...(await this.#page.next()).value)
-    RxEvent.emit(this, 'list')
+    notifyChange(this, 'list')
     this.loading = false
   }
 
@@ -103,14 +75,7 @@ export class HomeViewModel extends EventTarget {
 export function HomeView() {
   const windowRef = useInject<Window>(WindowToken)
   const giphyService = useInject(GiphyService)
-  const vm = useReactive(
-    () => new HomeViewModel(giphyService),
-    'list',
-    'loading',
-    'searchInput',
-    'showFavorites',
-    'favorites',
-  )
+  const vm = useViewModel(() => new HomeViewModel(giphyService))
 
   return (
     <Fragment>
