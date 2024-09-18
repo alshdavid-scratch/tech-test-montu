@@ -1,7 +1,5 @@
 import { h } from "preact"
 
-
-
 export const classNames = (...inputs: Array<[string, boolean] | Record<string, boolean | undefined> |string | undefined | h.JSX.SignalLike<string | undefined>>): string => {
   let className = ''
 
