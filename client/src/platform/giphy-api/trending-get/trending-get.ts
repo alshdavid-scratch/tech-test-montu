@@ -97,7 +97,7 @@ export type TrendingResponseData = {
     };
   };
   alt_text: string;
-}
+};
 
 export type TrendingResponse = {
   data: Array<TrendingResponseData>;
@@ -115,8 +115,8 @@ export type TrendingResponse = {
 
 export async function trendingRequestGet(
   fetcher: IFetch,
-  kind: 'gifs' | 'stickers',
-  options: TrendingRequest
+  kind: "gifs" | "stickers",
+  options: TrendingRequest,
 ): Promise<TrendingResponse> {
   const query = new URLSearchParams();
   for (const [key, value] of Object.entries(options)) {
@@ -124,12 +124,12 @@ export async function trendingRequestGet(
   }
 
   const response = await fetcher.fetch(
-    `https://api.giphy.com/v1/${kind}/trending?${query.toString()}`
+    `https://api.giphy.com/v1/${kind}/trending?${query.toString()}`,
   );
 
   if (!response.ok) {
-    throw new Error("Request failed")
+    throw new Error("Request failed");
   }
-  
-  return await response.json()
+
+  return await response.json();
 }

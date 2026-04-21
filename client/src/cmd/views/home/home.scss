@@ -1,15 +1,15 @@
-@import '../../scss/mixins.scss';
+@use "../../scss/mixins.scss" as *;
 
 .navbar {
   background-color: var(--color-brand);
 
-  &>div {
+  & > div {
     display: flex;
     justify-content: space-between;
     align-items: center;
     height: 50px;
     color: var(--color-white);
-    
+
     @include desktop {
       padding: 0 var(--spacing-1);
     }
@@ -24,9 +24,9 @@
         width: 35px;
         cursor: pointer;
         opacity: 0.7;
-        
+
         svg {
-          fill: var(--color-yellow-500)
+          fill: var(--color-yellow-500);
         }
 
         &.active {
@@ -34,7 +34,7 @@
         }
       }
 
-      &>* {
+      & > * {
         margin-right: var(--spacing-4);
 
         &:last-child {
@@ -50,8 +50,8 @@
     font-weight: 500;
 
     &:before {
-      content: '';
-      background-image: url('../../../assets/logo.svg');
+      content: "";
+      background-image: url("../../../assets/logo.svg");
       background-size: contain;
       background-repeat: no-repeat;
       background-position: center;
@@ -77,7 +77,7 @@
   right: 0;
   z-index: 100;
 
-  &>div {
+  & > div {
     display: flex;
   }
 
@@ -90,7 +90,6 @@
     border: none;
     border-left: 4px solid var(--color-brand);
     padding: 0 var(--spacing-3);
-
   }
 }
 
@@ -98,7 +97,7 @@
   flex: 1;
   position: relative;
 
-  .images, 
+  .images,
   .ghosts {
     padding-top: var(--spacing-1);
     display: grid;
@@ -115,7 +114,7 @@
       grid-template-columns: auto auto auto;
     }
 
-    .image-container, 
+    .image-container,
     .ghost {
       position: relative;
       height: 300px;
@@ -134,7 +133,8 @@
   .image-container {
     cursor: pointer;
 
-    a, .favorite {
+    a,
+    .favorite {
       position: absolute;
       top: 0;
       right: 0;
@@ -163,14 +163,16 @@
           transform: scale(130%);
         }
       }
-      
+
       .component-icon {
         height: 20px;
-        width: 20px;        
+        width: 20px;
 
         svg {
           fill: rgba(red, 0.4);
-          transition: fill 0.25s ease-in-out, transform 0.25s ease-in-out;
+          transition:
+            fill 0.25s ease-in-out,
+            transform 0.25s ease-in-out;
         }
 
         &:hover svg {
@@ -185,7 +187,6 @@
         }
       }
     }
-
   }
 
   .ghosts {
@@ -193,7 +194,7 @@
     inset: 0;
     overflow: hidden;
     z-index: 1;
-    
+
     .ghost {
       background-color: var(--color-grey-500);
       animation: pulse 0.5s ease-in infinite;
@@ -206,11 +207,16 @@
       animation: none;
     }
   }
-
 }
 
 @keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.8; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 1;
+  }
 }

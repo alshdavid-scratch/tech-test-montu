@@ -1,5 +1,5 @@
-@import './scss/mixins.scss';
-@import './scss/variables.scss';
+@use "./scss/mixins.scss" as *;
+@use "./scss/variables.scss" as *;
 
 body {
   margin: 0;
@@ -20,8 +20,6 @@ body {
   display: contents;
 }
 
-
 .content-max-width {
   @include content-max-width;
 }
-

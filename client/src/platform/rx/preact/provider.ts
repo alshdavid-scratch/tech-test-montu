@@ -1,12 +1,21 @@
 import { createContext } from "preact";
 import { useContext } from "preact/hooks";
 
-export type ProviderMap = Map<any, any>;
+export const InjectContext = createContext<Provider>(
+  // @ts-expect-error
+  null,
+);
 
-export const AppContext = createContext<Map<any, any>>(new Map());
+export class Provider extends Map<any, any> {
+  static Provider = InjectContext.Provider;
 
-export function useAppContext(): Map<any, unknown> {
-  return useContext(AppContext);
+  provide(token: any, value: any) {
+    this.set(token, value);
+  }
+}
+
+export function useInjectContext(): Provider {
+  return useContext(InjectContext);
 }
 
 export function useInject<C extends new (...args: any[]) => any>(
@@ -14,7 +23,7 @@ export function useInject<C extends new (...args: any[]) => any>(
 ): InstanceType<C>;
 export function useInject<T>(key: any): T;
 export function useInject<T extends unknown>(key: any): T {
-  const target = useContext(AppContext).get(key);
+  const target = useContext(InjectContext).get(key);
   if (!target) {
     try {
       throw new Error(`[PROVIDER] Nothing provided for ${key}`);

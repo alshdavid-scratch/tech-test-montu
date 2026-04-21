@@ -3,20 +3,19 @@
   https://api.giphy.com/v1/gifs/search
 */
 
-
 import { IFetch } from "../../dom/index.ts";
 
 export type SearchRequest = {
-  api_key: string
-  q: string
-  limit?: number
-  offset?: number
-  Default?: string
-  Maximum?: string
-  rating?: string
-  lang?: string
-  random_id?: string
-  bundle?: string
+  api_key: string;
+  q: string;
+  limit?: number;
+  offset?: number;
+  Default?: string;
+  Maximum?: string;
+  rating?: string;
+  lang?: string;
+  random_id?: string;
+  bundle?: string;
 };
 
 export type SearchResponseImage = {
@@ -33,14 +32,14 @@ export type SearchResponseImage = {
 };
 
 export type SearchResponseData = {
-  alt_text: string
-  analytics: string
-  analytics_response_payload: string
-  bitly_gif_url: string
-  bitly_url: string
-  content_url: string
-  embed_url: string
-  id: string
+  alt_text: string;
+  analytics: string;
+  analytics_response_payload: string;
+  bitly_gif_url: string;
+  bitly_url: string;
+  content_url: string;
+  embed_url: string;
+  id: string;
   images: {
     original: SearchResponseImage;
     downsized: SearchResponseImage;
@@ -66,23 +65,23 @@ export type SearchResponseData = {
     preview_webp: SearchResponseImage;
     "480w_still": SearchResponseImage;
   };
-  import_datetime: string
-  is_sticker: string
-  rating: string
-  slug: string
-  source: string
-  source_post_url: string
-  source_tld: string
-  title: string
-  trending_datetime: string
-  type: string
-  url: string
-  user: string
-  username: string
-}
+  import_datetime: string;
+  is_sticker: string;
+  rating: string;
+  slug: string;
+  source: string;
+  source_post_url: string;
+  source_tld: string;
+  title: string;
+  trending_datetime: string;
+  type: string;
+  url: string;
+  user: string;
+  username: string;
+};
 
 export type SearchResponse = {
-  data: Array<SearchResponseData>
+  data: Array<SearchResponseData>;
   pagination: {
     total_count: number;
     count: number;
@@ -97,8 +96,8 @@ export type SearchResponse = {
 
 export async function searchRequestGet(
   fetcher: IFetch,
-  kind: 'gifs' | 'stickers',
-  options: SearchRequest
+  kind: "gifs" | "stickers",
+  options: SearchRequest,
 ): Promise<SearchResponse> {
   const query = new URLSearchParams();
   for (const [key, value] of Object.entries(options)) {
@@ -106,12 +105,12 @@ export async function searchRequestGet(
   }
 
   const response = await fetcher.fetch(
-    `https://api.giphy.com/v1/${kind}/search?${query.toString()}`
+    `https://api.giphy.com/v1/${kind}/search?${query.toString()}`,
   );
 
   if (!response.ok) {
-    throw new Error("Request failed")
+    throw new Error("Request failed");
   }
-  
-  return await response.json()
+
+  return await response.json();
 }

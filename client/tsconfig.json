@@ -1,19 +1,19 @@
 {
   "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
     "target": "ESNext",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "lib": ["DOM", "ESNext", "ESNext.AsyncIterable", "ESNext.Array"],
+    "strict": true,
+    "noEmit": true,
+    "experimentalDecorators": false,
+    "useDefineForClassFields": true,
+    "allowImportingTsExtensions": true,
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
     "jsx": "react",
     "jsxFactory": "h",
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "experimentalDecorators": true,
-    "esModuleInterop": true,
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
-    "lib": ["DOM", "ESNext"],
-    "types": ["@types/node"]
+    "types": ["./types/modules.d.ts"]
   },
-  "include": ["src", "test"],
+  "include": ["src", "test"]
 }
